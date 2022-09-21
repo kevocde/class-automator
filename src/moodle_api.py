@@ -10,6 +10,7 @@ class MoodlApi:
 
         self._session = requests.Session()
         self._sesskey = None
+        self._last_message_sended = None
 
     @staticmethod
     def _set_arguments(kwargs):
@@ -58,15 +59,11 @@ class MoodlApi:
         else:
             buffer_messages.append({'text': message})
 
-        print(buffer_messages)
-
         self.post(
             f'/lib/ajax/service.php?sesskey={self._sesskey}&info={methodname}',
-            json=[
-                {
-                    'index': 0,
-                    'methodname': methodname,
-                    'args': {'conversationid': conversationid, 'messages': buffer_messages}
-                }
-            ]
+            json=[{
+                'index': 0,
+                'methodname': methodname,
+                'args': {'conversationid': conversationid, 'messages': buffer_messages}
+            }]
         )
