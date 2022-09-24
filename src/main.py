@@ -1,3 +1,5 @@
+import time
+
 from decouple import config
 from moodle_api import MoodlApi
 
@@ -9,4 +11,6 @@ if __name__ == '__main__':
         password=config('ACADEMY_PASSWORD')
     )
 
-    moodle_api.send_message(2339, "Hi Ana, I'm a robot")
+    to = 'Ana Marcela Grijalba Brand'
+    message = moodle_api.send_message(to, 'This is a test message')[0]
+    response = moodle_api.get_response(to, message['timecreated'])

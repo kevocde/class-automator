@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import time
 
 
 class MoodlApi:
@@ -10,6 +11,7 @@ class MoodlApi:
 
         self._session = requests.Session()
         self._sesskey = None
+        self._userid = None
         self._last_message_sended = None
 
     @staticmethod
@@ -31,6 +33,15 @@ class MoodlApi:
 
         return self._session.post(url, *args, **kwargs)
 
+    def _consume_service(self, methodname, method='get', *args, **kwargs):
+        url = f'/lib/ajax/service.php?sesskey={self._sesskey}&info={methodname}'
+        if method == 'get':
+            return self.get(url, **kwargs)
+        elif method == 'post':
+            return self.post(url, *args, **kwargs)
+        else:
+            raise ReferenceError
+
     def _login(self):
         # Carga primero el token del formulario
         soup = BeautifulSoup(self.get('/login/index.php').text, 'html.parser')
@@ -45,25 +56,87 @@ class MoodlApi:
             'html.parser'
         )
         self._sesskey = soup.select_one('input[name="sesskey"]').attrs['value']
+        self._userid = soup.select_one('[data-userid]').attrs['data-userid']
 
-    def send_message(self, conversationid, message):
+    def send_message(self, to, messages):
         methodname = 'core_message_send_messages_to_conversation'
-        buffer_messages = []
+        conversation = self.get_conversation_by_member_name(to)
+
+        if len(conversation):
+            if isinstance(messages, (tuple, list)):
+                messages = [{'text': message} for message in messages]
+            else:
+                messages = [{'text': messages}]
+
+            response = self._consume_service(
+                methodname,
+                method='post',
+                json=[{
+                    'index': 0,
+                    'methodname': methodname,
+                    'args': {'conversationid': conversation['id'], 'messages': messages}
+                }]
+            )
+
+            return response.json()[0]['data']
+
+    def get_conversation_by_member_name(self, name):
+        methodname = 'core_message_get_conversations'
 
         if not self._sesskey:
             self._login()
 
-        if isinstance(message, (tuple, list)):
-            for text in message:
-                buffer_messages.append({'text': text})
-        else:
-            buffer_messages.append({'text': message})
-
-        self.post(
-            f'/lib/ajax/service.php?sesskey={self._sesskey}&info={methodname}',
+        response = self._consume_service(
+            methodname,
+            method='post',
             json=[{
                 'index': 0,
                 'methodname': methodname,
-                'args': {'conversationid': conversationid, 'messages': buffer_messages}
+                'args': {
+                    'userid': self._userid,
+                    'type': 1,
+                    'limitnum': 51,
+                    'limitfrom': 0,
+                    'favourites': False,
+                    'mergeself': True,
+                }
             }]
         )
+
+        if response.status_code == 200:
+            for conv in response.json()[0]['data']['conversations']:
+                for member in conv['members']:
+                    if member['fullname'] == name:
+                        return conv
+
+        return None
+
+    def get_response(self, fromu, last_timestamp):
+        methodname = 'core_message_get_conversation_messages'
+        conversation = self.get_conversation_by_member_name(fromu)
+
+        response = self._consume_service(
+            methodname,
+            method='post',
+            json=[{
+                'index': 0,
+                'methodname': methodname,
+                'args': {
+                    'currentuserid': self._userid,
+                    'convid': conversation['id'],
+                    'newest': True,
+                    'limitnum': 0,
+                    'limitfrom': 0,
+                    'timefrom': last_timestamp
+                }
+            }]
+        )
+
+        if response.status_code == 200:
+            messages = response.json()[0]['data']['messages']
+            return [
+                message for message in messages
+                if message['timecreated'] >= last_timestamp and int(message['useridfrom']) != int(self._userid)
+            ]
+
+        return []
