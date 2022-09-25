@@ -20,7 +20,7 @@ class Chat:
 
         print(f"Welcome {self._credentials[1][0].upper()}{self._credentials[1][1:]}, this is the command line moodle "
               f"chat.\nNow you're connect with {self._user_to}, so start to texting!!\nIf you want exit of the chat, "
-              f"only write \":quit\".\n"
+              "only write \":quit\".\n"
               "Write your message, later press [enter].")
 
         while not sended:

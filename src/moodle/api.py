@@ -67,7 +67,7 @@ class Api:
         else:
             raise Exception("Cannot login in the site")
 
-    def send_message(self, to: str, messages: Union[List[str], str]) -> Union[List[Message], None]:
+    def send_message(self, to: str, messages: Union[List[str], str]) -> Optional[List[Message]]:
         """Sends a message to determinate user"""
         methodname = 'core_message_send_messages_to_conversation'
         conversation = self.get_conversation_by_member_name(to)
