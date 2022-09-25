@@ -1,9 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
-import time
 
 
-class MoodlApi:
+class MoodleApi:
     def __init__(self, platform_url, username, password):
         self._platform_url = platform_url
         self._username = username
@@ -48,15 +47,17 @@ class MoodlApi:
         logintoken = soup.select_one('input[name="logintoken"]').attrs['value']
 
         # Solicita el loggeo y obtiene la sesskey
-        soup = BeautifulSoup(
-            self.post(
-                '/login/index.php',
-                data={'logintoken': logintoken, 'username': self._username, 'password': self._password}
-            ).text,
-            'html.parser'
+        resp = self.post(
+            '/login/index.php',
+            data={'logintoken': logintoken, 'username': self._username, 'password': self._password}
         )
-        self._sesskey = soup.select_one('input[name="sesskey"]').attrs['value']
-        self._userid = soup.select_one('[data-userid]').attrs['data-userid']
+
+        if resp.status_code < 400:
+            soup = BeautifulSoup(self.get('/my').text, 'html.parser')
+            self._sesskey = soup.select_one('input[name="sesskey"]').attrs['value']
+            self._userid = soup.select_one('[data-userid]').attrs['data-userid']
+        else:
+            raise Exception("Cannot login in the site")
 
     def send_message(self, to, messages):
         methodname = 'core_message_send_messages_to_conversation'
@@ -113,6 +114,7 @@ class MoodlApi:
 
     def get_response(self, fromu, last_timestamp):
         methodname = 'core_message_get_conversation_messages'
+        messages = []
         conversation = self.get_conversation_by_member_name(fromu)
 
         response = self._consume_service(
@@ -133,10 +135,8 @@ class MoodlApi:
         )
 
         if response.status_code == 200:
-            messages = response.json()[0]['data']['messages']
-            return [
-                message for message in messages
-                if message['timecreated'] >= last_timestamp and int(message['useridfrom']) != int(self._userid)
-            ]
+            for message in response.json()[0]['data']['messages']:
+                if message['timecreated'] >= last_timestamp and int(message['useridfrom']) != int(self._userid):
+                    messages.append(message)
 
-        return []
+        return messages
