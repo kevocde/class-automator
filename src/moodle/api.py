@@ -1,41 +1,43 @@
 from bs4 import BeautifulSoup
+from typing import Union, List, Optional
+from pydantic import parse_obj_as
+from .models import Message, Conversation
 import requests
 
 
 class Api:
-    def __init__(self, platform_url, username, password):
-        self._platform_url = platform_url
-        self._username = username
-        self._password = password
+    def __init__(self, platform_url: str, username: str, password: str):
+        self._platform_url: str = platform_url
+        self._username: str = username
+        self._password: str = password
 
         self._session = requests.Session()
-        self._sesskey = None
-        self._userid = None
-        self._last_message_sended = None
+        self._sesskey: Optional[str] = None
+        self._userid: Optional[str] = None
 
     @staticmethod
-    def _set_arguments(kwargs):
+    def _set_arguments(kwargs: dict):
         """Adds to the parameters, defaults values, for example the header \"User-Agent\""""
         if 'headers' not in kwargs:
             kwargs['headers'] = {}
 
         kwargs['headers'] |= {'User-Agent': 'PostmanRuntime/7.29.2'}
 
-    def get(self, url, **kwargs):
+    def get(self, url: str, **kwargs):
         """Sends a get request"""
         url = self._platform_url + url
         self._set_arguments(kwargs)
 
         return self._session.get(url, **kwargs)
 
-    def post(self, url, *args, **kwargs):
+    def post(self, url: str, *args, **kwargs):
         """Sends a post request"""
         url = self._platform_url + url
         self._set_arguments(kwargs)
 
         return self._session.post(url, *args, **kwargs)
 
-    def _consume_service(self, methodname, method='get', *args, **kwargs):
+    def _consume_service(self, methodname: str, method: str = 'get', *args, **kwargs):
         """Consumes a determinate service with the prefix service.php"""
         url = f'/lib/ajax/service.php?sesskey={self._sesskey}&info={methodname}'
         if method == 'get':
@@ -65,13 +67,13 @@ class Api:
         else:
             raise Exception("Cannot login in the site")
 
-    def send_message(self, to, messages):
+    def send_message(self, to: str, messages: Union[List[str], str]) -> Union[List[Message], None]:
         """Sends a message to determinate user"""
         methodname = 'core_message_send_messages_to_conversation'
         conversation = self.get_conversation_by_member_name(to)
 
         if conversation:
-            if isinstance(messages, (tuple, list)):
+            if isinstance(messages, list):
                 messages = [{'text': message} for message in messages]
             else:
                 messages = [{'text': messages}]
@@ -82,15 +84,15 @@ class Api:
                 json=[{
                     'index': 0,
                     'methodname': methodname,
-                    'args': {'conversationid': conversation['id'], 'messages': messages}
+                    'args': {'conversationid': conversation.id, 'messages': messages}
                 }]
             )
 
-            return response.json()[0]['data']
+            return parse_obj_as(List[Message], response.json()[0]['data'])
         else:
-            return []
+            return None
 
-    def get_conversation_by_member_name(self, name):
+    def get_conversation_by_member_name(self, name: str) -> Optional[Conversation]:
         """Look for the conversation information by the name of the user"""
         methodname = 'core_message_get_conversations'
 
@@ -120,17 +122,16 @@ class Api:
             if len(response) \
                     and 'data' in response[0] \
                     and 'conversations' in response[0]['data']:
-                for conv in response[0]['data']['conversations']:
-                    for member in conv['members']:
-                        if member['fullname'] == name:
+                for conv in parse_obj_as(List[Conversation], response[0]['data']['conversations']):
+                    for member in conv.members:
+                        if member.fullname == name:
                             return conv
 
         return None
 
-    def get_response(self, fromu, last_timestamp):
+    def get_response(self, fromu: str, last_timestamp: int) -> Optional[List[Message]]:
         """Consumes the service to get the response of the userfrom and later return one"""
         methodname = 'core_message_get_conversation_messages'
-        messages = []
         conversation = self.get_conversation_by_member_name(fromu)
 
         if conversation:
@@ -142,7 +143,7 @@ class Api:
                     'methodname': methodname,
                     'args': {
                         'currentuserid': self._userid,
-                        'convid': conversation['id'],
+                        'convid': conversation.id,
                         'newest': True,
                         'limitnum': 0,
                         'limitfrom': 0,
@@ -157,9 +158,9 @@ class Api:
                 if len(response) \
                         and 'data' in response[0] \
                         and 'messages' in response[0]['data']:
-                    for message in response[0]['data']['messages']:
-                        if message['timecreated'] >= last_timestamp and int(message['useridfrom']) != int(self._userid):
-                            message['text'] = BeautifulSoup(message['text'], 'html.parser').getText()
-                            messages.append(message)
+                    return [
+                        message for message in parse_obj_as(List[Message], response[0]['data']['messages'])
+                        if message.timecreated >= last_timestamp and str(message.useridfrom) != self._userid
+                    ]
 
-        return messages
+        return None
