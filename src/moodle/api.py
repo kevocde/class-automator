@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 
 
-class MoodleApi:
+class Api:
     def __init__(self, platform_url, username, password):
         self._platform_url = platform_url
         self._username = username

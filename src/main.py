@@ -1,7 +1,5 @@
-import time
-
 from decouple import config
-from chat import Chat
+from moodle import Chat
 
 
 if __name__ == '__main__':

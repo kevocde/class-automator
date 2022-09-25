@@ -1,5 +1,5 @@
 import time
-from moodle_api import MoodleApi
+from src.moodle.api import Api
 from requests.exceptions import RequestException
 
 
@@ -8,7 +8,7 @@ class Chat:
         self._credentials = credentials
         self._user_to = None
         self._last_message = {}
-        self._moodleapi = MoodleApi(*credentials)
+        self._api = Api(*credentials)
 
     def connect_chat(self, user_to: str):
         sended = False
@@ -38,7 +38,7 @@ class Chat:
     def send(self, message: str):
         sended = True
         try:
-            resp = self._moodleapi.send_message(self._user_to, message.strip())
+            resp = self._api.send_message(self._user_to, message.strip())
             if not len(resp):
                 sended = False
             else:
@@ -55,7 +55,7 @@ class Chat:
             lasttmsp = (time.time() - 100 * 60 * 60) if not self._last_message else self._last_message['timecreated']
 
             try:
-                resp = self._moodleapi.get_response(self._user_to, lasttmsp)
+                resp = self._api.get_response(self._user_to, lasttmsp)
                 if len(resp) > 0:
                     self._last_message = resp[-1]
                     return resp
