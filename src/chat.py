@@ -1,22 +1,23 @@
 import time
 from moodle_api import MoodleApi
+from requests.exceptions import RequestException
 
 
 class Chat:
     def __init__(self, credentials: list[str]):
         self._credentials = credentials
         self._user_to = None
-        self._last_message = []
+        self._last_message = {}
         self._moodleapi = MoodleApi(*credentials)
 
     def connect_chat(self, user_to: str):
         sended = False
         self._user_to = user_to
 
-        print(f"Welcome {self._credentials[-2]}, this is the command line moodle chat.\n"
-              f"Now you're connect with {self._user_to}, so start to texting!!\n"
-              "If you want exit of the chat, only write \":quit\".\n"
-              "Write your message, later press enter.")
+        print(f"Welcome {self._credentials[1][0].upper()}{self._credentials[1][1:]}, this is the command line moodle "
+              f"chat.\nNow you're connect with {self._user_to}, so start to texting!!\nIf you want exit of the chat, "
+              f"only write \":quit\".\n"
+              "Write your message, later press [enter].")
 
         while not sended:
             message = input("You: ").strip()
@@ -36,13 +37,15 @@ class Chat:
 
     def send(self, message: str):
         try:
-            self._last_message = self._moodleapi.send_message(self._user_to, message)[-1]
-            return True
-        except Exception as ex:
-            print(ex)
+            if len(self._moodleapi.send_message(self._user_to, message)):
+                self._last_message = self._moodleapi.send_message(self._user_to, message)[-1]
+                return True
+            else:
+                return False
+        except RequestException:
             return False
 
-    def wait_response(self, waitfor: int, each: int = 60):
+    def wait_response(self, waitfor: int, each: int = 15):
         times = round(waitfor / each)
 
         while times > 0:
@@ -53,8 +56,6 @@ class Chat:
                 if len(resp) > 0:
                     self._last_message = resp[-1]
                     return resp
-            except Exception:
-                pass
             finally:
                 times -= 1
                 time.sleep(each)

@@ -63,7 +63,7 @@ class MoodleApi:
         methodname = 'core_message_send_messages_to_conversation'
         conversation = self.get_conversation_by_member_name(to)
 
-        if len(conversation):
+        if conversation:
             if isinstance(messages, (tuple, list)):
                 messages = [{'text': message} for message in messages]
             else:
@@ -80,6 +80,8 @@ class MoodleApi:
             )
 
             return response.json()[0]['data']
+        else:
+            return []
 
     def get_conversation_by_member_name(self, name):
         methodname = 'core_message_get_conversations'
@@ -105,10 +107,15 @@ class MoodleApi:
         )
 
         if response.status_code == 200:
-            for conv in response.json()[0]['data']['conversations']:
-                for member in conv['members']:
-                    if member['fullname'] == name:
-                        return conv
+            response = response.json()
+
+            if len(response) \
+                    and 'data' in response[0] \
+                    and 'conversations' in response[0]['data']:
+                for conv in response[0]['data']['conversations']:
+                    for member in conv['members']:
+                        if member['fullname'] == name:
+                            return conv
 
         return None
 
@@ -117,26 +124,34 @@ class MoodleApi:
         messages = []
         conversation = self.get_conversation_by_member_name(fromu)
 
-        response = self._consume_service(
-            methodname,
-            method='post',
-            json=[{
-                'index': 0,
-                'methodname': methodname,
-                'args': {
-                    'currentuserid': self._userid,
-                    'convid': conversation['id'],
-                    'newest': True,
-                    'limitnum': 0,
-                    'limitfrom': 0,
-                    'timefrom': last_timestamp
-                }
-            }]
-        )
+        if conversation:
+            response = self._consume_service(
+                methodname,
+                method='post',
+                json=[{
+                    'index': 0,
+                    'methodname': methodname,
+                    'args': {
+                        'currentuserid': self._userid,
+                        'convid': conversation['id'],
+                        'newest': True,
+                        'limitnum': 0,
+                        'limitfrom': 0,
+                        'timefrom': last_timestamp
+                    }
+                }]
+            )
 
-        if response.status_code == 200:
-            for message in response.json()[0]['data']['messages']:
-                if message['timecreated'] >= last_timestamp and int(message['useridfrom']) != int(self._userid):
-                    messages.append(message)
+            if response.status_code == 200:
+                response = response.json()
+
+                if len(response) \
+                        and 'data' in response[0] \
+                        and 'messages' in response[0]['data']:
+                    for message in response[0]['data']['messages']:
+                        if message['timecreated'] >= last_timestamp and int(message['useridfrom']) != int(self._userid):
+                            messages.append(message.update({
+                                'text': BeautifulSoup(message['text'].get_text())
+                            }))
 
         return messages
