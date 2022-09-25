@@ -150,8 +150,7 @@ class MoodleApi:
                         and 'messages' in response[0]['data']:
                     for message in response[0]['data']['messages']:
                         if message['timecreated'] >= last_timestamp and int(message['useridfrom']) != int(self._userid):
-                            messages.append(message.update({
-                                'text': BeautifulSoup(message['text'].get_text())
-                            }))
+                            message['text'] = BeautifulSoup(message['text'], 'html.parser').getText()
+                            messages.append(message)
 
         return messages

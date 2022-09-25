@@ -36,14 +36,17 @@ class Chat:
                     sended = False
 
     def send(self, message: str):
+        sended = True
         try:
-            if len(self._moodleapi.send_message(self._user_to, message)):
-                self._last_message = self._moodleapi.send_message(self._user_to, message)[-1]
-                return True
+            resp = self._moodleapi.send_message(self._user_to, message.strip())
+            if not len(resp):
+                sended = False
             else:
-                return False
+                self._last_message = resp[-1]
         except RequestException:
-            return False
+            sended = False
+
+        return sended
 
     def wait_response(self, waitfor: int, each: int = 15):
         times = round(waitfor / each)
