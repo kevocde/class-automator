@@ -15,24 +15,28 @@ class Api:
 
     @staticmethod
     def _set_arguments(kwargs):
+        """Adds to the parameters, defaults values, for example the header \"User-Agent\""""
         if 'headers' not in kwargs:
             kwargs['headers'] = {}
 
         kwargs['headers'] |= {'User-Agent': 'PostmanRuntime/7.29.2'}
 
     def get(self, url, **kwargs):
+        """Sends a get request"""
         url = self._platform_url + url
         self._set_arguments(kwargs)
 
         return self._session.get(url, **kwargs)
 
     def post(self, url, *args, **kwargs):
+        """Sends a post request"""
         url = self._platform_url + url
         self._set_arguments(kwargs)
 
         return self._session.post(url, *args, **kwargs)
 
     def _consume_service(self, methodname, method='get', *args, **kwargs):
+        """Consumes a determinate service with the prefix service.php"""
         url = f'/lib/ajax/service.php?sesskey={self._sesskey}&info={methodname}'
         if method == 'get':
             return self.get(url, **kwargs)
@@ -42,16 +46,18 @@ class Api:
             raise ReferenceError
 
     def _login(self):
-        # Carga primero el token del formulario
+        """Login on the site"""
+        # First load the token
         soup = BeautifulSoup(self.get('/login/index.php').text, 'html.parser')
         logintoken = soup.select_one('input[name="logintoken"]').attrs['value']
 
-        # Solicita el loggeo y obtiene la sesskey
+        # Later sends the login information form
         resp = self.post(
             '/login/index.php',
             data={'logintoken': logintoken, 'username': self._username, 'password': self._password}
         )
 
+        # At the last, load the dashboard and get the sesskey and the userid
         if resp.status_code < 400:
             soup = BeautifulSoup(self.get('/my').text, 'html.parser')
             self._sesskey = soup.select_one('input[name="sesskey"]').attrs['value']
@@ -60,6 +66,7 @@ class Api:
             raise Exception("Cannot login in the site")
 
     def send_message(self, to, messages):
+        """Sends a message to determinate user"""
         methodname = 'core_message_send_messages_to_conversation'
         conversation = self.get_conversation_by_member_name(to)
 
@@ -84,6 +91,7 @@ class Api:
             return []
 
     def get_conversation_by_member_name(self, name):
+        """Look for the conversation information by the name of the user"""
         methodname = 'core_message_get_conversations'
 
         if not self._sesskey:
@@ -120,6 +128,7 @@ class Api:
         return None
 
     def get_response(self, fromu, last_timestamp):
+        """Consumes the service to get the response of the userfrom and later return one"""
         methodname = 'core_message_get_conversation_messages'
         messages = []
         conversation = self.get_conversation_by_member_name(fromu)

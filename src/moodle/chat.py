@@ -11,6 +11,7 @@ class Chat:
         self._api = Api(*credentials)
 
     def connect_chat(self, user_to: str):
+        """Start a new chat interface with the user specified"""
         sended = False
         self._user_to = user_to
 
@@ -36,6 +37,7 @@ class Chat:
                     sended = False
 
     def send(self, message: str):
+        """Send a message"""
         sended = True
         try:
             resp = self._api.send_message(self._user_to, message.strip())
@@ -49,6 +51,7 @@ class Chat:
         return sended
 
     def wait_response(self, waitfor: int, each: int = 15):
+        """Wait for the response of the contact"""
         times = round(waitfor / each)
 
         while times > 0:
