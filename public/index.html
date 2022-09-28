@@ -10,18 +10,25 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/app.css">
+    <link rel="stylesheet" href="dist/app.css">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-neutral-800 border-t-8 border-orange-600">
     <div id="app" class="container mx-auto">
-        <div class="card">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur assumenda, dicta error ex illum iusto necessitatibus nemo voluptatem. Dolores eos error et hic laboriosam nihil quam quis? Eaque, odit, voluptatem?
+        <div class="title">
+            <h1 class="title-title">Class Automator</h1>
+            <div class="card title-description">
+                <div class="card-content">
+                    <p class="title-description">
+                        ¡Bienvenido al automatizador de clases!<br>
+                        Este aplicativo te permite <strong>programar tus clases de inglés</strong> por ti, eliminando así la tediosa tarea de hacerlo manualmente; tan solo debes seleccionar el día de la semana, la fecha e ingresar los datos de tu clase.<br>
+                        <strong>¡Y listo!, eso es todo</strong>, este agendará la clase por ti, dos días antes de la fecha que pusiste.
+                    </p>
+                </div>
+            </div>
         </div>
-        <div class="title py-4">
-            <h1 class="text-4xl">Class Automator</h1>
-        </div>
+
         {{ message }}
     </div>
     <script src="assets/app.js"></script>

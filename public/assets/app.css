@@ -1,7 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
     font-family: 'Ubuntu', sans-serif;
 }
 
 .card {
-    apply: overflow-hidden bg-white shadow sm:rounded-lg;
+    @apply overflow-hidden bg-white shadow sm:rounded-lg;
 }
+
+    .card .card-content {
+        @apply p-4;
+    }
+
+.title {
+    @apply py-4;
+}
+
+    .title .title-title {
+        @apply text-4xl pb-4 text-white;
+    }
+
+    .title .title-title::after {
+        content: " ";
+        @apply bg-orange-400 p-0.5 block w-40 mt-3;
+    }
+
+    .title .title-description {
+        @apply text-neutral-600;
+    }
