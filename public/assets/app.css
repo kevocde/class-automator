@@ -1,0 +1,7 @@
+* {
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.card {
+    apply: overflow-hidden bg-white shadow sm:rounded-lg;
+}
