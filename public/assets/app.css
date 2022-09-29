@@ -14,6 +14,22 @@
         @apply p-4;
     }
 
+    .card .card-content-list {
+        @apply p-0;
+    }
+
+    .card-content-list .item {
+         @apply py-3 border-b cursor-pointer;
+    }
+
+    .card-content-list .item.active {
+        @apply bg-orange-400 text-orange-100
+    }
+
+    .card-content-list .item .item-url {
+        @apply block w-full px-3 text-lg;
+    }
+
 .title {
     @apply py-4;
 }
@@ -29,4 +45,16 @@
 
     .title .title-description {
         @apply text-neutral-600;
+    }
+
+.main {
+    @apply flex;
+}
+
+    .main .main-nav {
+        @apply w-1/4;
+    }
+
+    .main .main-content {
+        @apply w-3/4;
     }
