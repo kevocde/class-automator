@@ -14,10 +14,10 @@ export default {
   <nav class="container-fluid navigator d-flex justify-content-center">
       <ul class="btn-group shadow-sm p-0 m-0 navigator-list">
         <li class="btn btn-lg fs-6 px-4 py-2 navigator-item">
-          <RouterLink to="init" active-class="active" class="navigator-item-link">Agendar</RouterLink>
+          <RouterLink to="/" active-class="active" class="navigator-item-link">Agendar</RouterLink>
         </li>
         <li class="btn btn-lg fs-6 px-4 py-2 navigator-item">
-          <RouterLink to="list" active-class="active" class="navigator-item-link">Visualizar</RouterLink>
+          <RouterLink to="/list" active-class="active" class="navigator-item-link">Visualizar</RouterLink>
         </li>
       </ul>
   </nav>

@@ -1,9 +1,9 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import InitView from '@/views/InitView.vue'
 </script>
 
 <template>
-  <RouterView />
+  <InitView />
 </template>
 
 <style scoped>
