@@ -1,5 +1,5 @@
 <script setup></script>
 
 <template>
-  <div><p>Here the list</p></div>
+  <div class="container-fluid d-flex justify-content-center"></div>
 </template>

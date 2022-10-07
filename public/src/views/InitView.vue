@@ -5,7 +5,8 @@ import Navigator from '../components/Navigator.vue'
 
 <template>
   <MainTitle />
-  <div class="py-3"></div>
+  <div class="py-4"></div>
   <Navigator />
+  <div class="py-3"></div>
   <RouterView />
 </template>
