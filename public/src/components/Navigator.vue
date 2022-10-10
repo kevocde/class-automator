@@ -35,13 +35,13 @@ export default {
           background-color: $indigo-300
 
           .navigator-item-link
-            color:  $indigo-100
+            color: $white
 
         &:has(.navigator-item-link.active)
           background-color: $indigo-400
 
           .navigator-item-link
-            color:  $indigo-100
+            color:  $white
 
         .navigator-item-link
           text-decoration: none
