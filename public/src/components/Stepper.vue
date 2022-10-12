@@ -1,66 +1,104 @@
 <script>
-const ACTIVE_CLASS = 'active'
+import UserInformationForm from "@/components/forms/UserInformationForm.vue";
+import ClassDetailsForm from "@/components/forms/ClassDetailsForm.vue";
+
+const ACTIVE_CLASS = "active";
 
 export default {
   data() {
     return {
-      steps: []
-    }
+      steps: [],
+    };
   },
   methods: {
     activeStep(key) {
-      this.steps.forEach(({ activator, content, active }, step_key) => {
-        let action = (key !== step_key) ? 'remove' : 'add'
+      this.steps.forEach(({ activator, content }, step_key) => {
+        let action = key !== step_key ? "remove" : "add";
 
-        activator.classList[action](ACTIVE_CLASS)
-        content.classList[action](ACTIVE_CLASS)
-      })
+        activator.classList[action](ACTIVE_CLASS);
+        content.classList[action](ACTIVE_CLASS);
+      });
     },
     loadSteps() {
-      const activators = document.querySelectorAll('.stepper .stepper-header .stepper-header-item')
-      const contents = document.querySelectorAll('.stepper .stepper-content .stepper-content-option')
+      const activators = document.querySelectorAll(
+        ".stepper .stepper-header .stepper-header-item"
+      );
+      const contents = document.querySelectorAll(
+        ".stepper .stepper-content .stepper-content-option"
+      );
 
       activators.forEach((value, key) => {
-        value.addEventListener('click', () => { this.activeStep(key) })
+        value.addEventListener("click", () => {
+          this.activeStep(key);
+        });
 
         this.steps.push({
           activator: value,
           content: contents[key],
-          active: false
-        })
-      })
+          active: false,
+        });
+      });
     },
     loadDefaultStep() {
       /** @todo Add url interaction, for example: when the url contains "#step-1", active the step 1  */
-      this.activeStep(0)
-    }
+      this.activeStep(0);
+    },
   },
   mounted() {
-    this.loadSteps()
-    this.loadDefaultStep()
-  }
-}
+    this.loadSteps();
+    this.loadDefaultStep();
+  },
+  components: {UserInformationForm, ClassDetailsForm},
+};
 </script>
 
 <template>
   <div class="stepper">
     <ul class="d-flex gap-1 w-100 stepper-header">
-      <li class="flex-fill py-2 d-flex align-items-center justify-content-center stepper-header-item">
-        <div class="rounded-circle d-flex justify-content-center align-items-center fs-5 fw-bold header-item-circle"><span>1</span></div>
-        <div class="ps-4 header-item-label"><span>Información de usuario</span></div>
+      <li
+        class="flex-fill d-flex align-items-center justify-content-center stepper-header-item"
+      >
+        <div
+          class="rounded-circle d-flex justify-content-center align-items-center fs-5 fw-bold header-item-circle"
+        >
+          <span>1</span>
+        </div>
+        <div class="ps-4 header-item-label">
+          <span>Información de usuario</span>
+        </div>
       </li>
-      <li class="flex-fill py-2 d-flex align-items-center justify-content-center stepper-header-item">
-        <div class="rounded-circle d-flex justify-content-center align-items-center fs-5 fw-bold header-item-circle"><span>2</span></div>
-        <div class="ps-4 header-item-label"><span>Detalles de clase</span></div>
+      <li
+        class="flex-fill d-flex align-items-center justify-content-center stepper-header-item"
+      >
+        <div
+          class="rounded-circle d-flex justify-content-center align-items-center fs-5 fw-bold header-item-circle"
+        >
+          <span>2</span>
+        </div>
+        <div class="ps-4 header-item-label"><span>Detalles de la clase</span></div>
       </li>
-      <li class="flex-fill py-2 d-flex align-items-center justify-content-center stepper-header-item">
-        <div class="rounded-circle d-flex justify-content-center align-items-center fs-5 fw-bold header-item-circle"><span>3</span></div>
+      <li
+        class="flex-fill d-flex align-items-center justify-content-center stepper-header-item"
+      >
+        <div
+          class="rounded-circle d-flex justify-content-center align-items-center fs-5 fw-bold header-item-circle"
+        >
+          <span>3</span>
+        </div>
         <div class="ps-4 header-item-label"><span>Agendamiento</span></div>
       </li>
     </ul>
     <div class="d-flex stepper-content">
-      <div class="stepper-content-option">First step content</div>
-      <div class="stepper-content-option">Second step content</div>
+      <div class="stepper-content-option">
+        <div class="d-flex justify-content-center py-2">
+          <UserInformationForm class="w-25" />
+        </div>
+      </div>
+      <div class="stepper-content-option">
+        <div class="d-flex justify-content-center py-2">
+          <ClassDetailsForm class="w-50" />
+        </div>
+      </div>
       <div class="stepper-content-option">Third step content</div>
     </div>
   </div>
@@ -97,10 +135,9 @@ export default {
 
   .stepper-content
     .stepper-content-option
-      display: none
+      display: none !important
 
       &.active
-        display: block
+        display: block !important
         width: 100%
-
 </style>
