@@ -1,6 +1,7 @@
 <script>
 import UserInformationForm from "@/components/forms/UserInformationForm.vue";
 import ClassDetailsForm from "@/components/forms/ClassDetailsForm.vue";
+import ScheduleForm from "@/components/forms/ScheduleForm.vue";
 
 const ACTIVE_CLASS = "active";
 
@@ -48,7 +49,7 @@ export default {
     this.loadSteps();
     this.loadDefaultStep();
   },
-  components: {UserInformationForm, ClassDetailsForm},
+  components: { ScheduleForm, UserInformationForm, ClassDetailsForm },
 };
 </script>
 
@@ -99,7 +100,11 @@ export default {
           <ClassDetailsForm class="w-50" />
         </div>
       </div>
-      <div class="stepper-content-option">Third step content</div>
+      <div class="stepper-content-option">
+        <div class="d-flex justify-content-center py-2">
+          <ScheduleForm class="w-50" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
