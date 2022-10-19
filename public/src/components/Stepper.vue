@@ -6,15 +6,16 @@ import ScheduleForm from "@/components/forms/ScheduleForm.vue";
 const ACTIVE_CLASS = "active";
 
 export default {
+  name: "Stepper",
   data() {
     return {
-      steps: [],
+      steps: []
     };
   },
   methods: {
     activeStep(key) {
-      this.steps.forEach(({ activator, content }, step_key) => {
-        let action = key !== step_key ? "remove" : "add";
+      this.steps.forEach(({ activator, content, active }, step_key) => {
+        let action = (key !== step_key || ! active) ? "remove" : "add";
 
         activator.classList[action](ACTIVE_CLASS);
         content.classList[action](ACTIVE_CLASS);
@@ -29,14 +30,19 @@ export default {
       );
 
       activators.forEach((value, key) => {
-        value.addEventListener("click", () => {
-          this.activeStep(key);
-        });
-
         this.steps.push({
           activator: value,
           content: contents[key],
-          active: false,
+          interaction: ! value.classList.contains('no-interact'),
+          active: value.classList.contains('active'),
+        });
+
+        this.steps[key].activator.addEventListener("click", () => {
+          if (this.steps[key].interaction) {
+            this.steps[key].active = true;
+
+            this.activeStep(key);
+          }
         });
       });
     },
@@ -56,34 +62,24 @@ export default {
 <template>
   <div class="stepper">
     <ul class="d-flex gap-1 w-100 stepper-header">
-      <li
-        class="flex-fill d-flex align-items-center justify-content-center stepper-header-item"
-      >
-        <div
-          class="rounded-circle d-flex justify-content-center align-items-center fs-5 fw-bold header-item-circle"
-        >
+      <li class="flex-fill d-flex align-items-center justify-content-center stepper-header-item active">
+        <div class="rounded-circle d-flex justify-content-center align-items-center fs-5 fw-bold header-item-circle">
           <span>1</span>
         </div>
         <div class="ps-4 header-item-label">
           <span>Información de usuario</span>
         </div>
       </li>
-      <li
-        class="flex-fill d-flex align-items-center justify-content-center stepper-header-item"
-      >
-        <div
-          class="rounded-circle d-flex justify-content-center align-items-center fs-5 fw-bold header-item-circle"
-        >
+      <li class="flex-fill d-flex align-items-center justify-content-center stepper-header-item no-interact">
+        <div class="rounded-circle d-flex justify-content-center align-items-center fs-5 fw-bold header-item-circle">
           <span>2</span>
         </div>
-        <div class="ps-4 header-item-label"><span>Detalles de la clase</span></div>
+        <div class="ps-4 header-item-label">
+          <span>Detalles de la clase</span>
+        </div>
       </li>
-      <li
-        class="flex-fill d-flex align-items-center justify-content-center stepper-header-item"
-      >
-        <div
-          class="rounded-circle d-flex justify-content-center align-items-center fs-5 fw-bold header-item-circle"
-        >
+      <li class="flex-fill d-flex align-items-center justify-content-center stepper-header-item no-interact">
+        <div class="rounded-circle d-flex justify-content-center align-items-center fs-5 fw-bold header-item-circle">
           <span>3</span>
         </div>
         <div class="ps-4 header-item-label"><span>Agendamiento</span></div>

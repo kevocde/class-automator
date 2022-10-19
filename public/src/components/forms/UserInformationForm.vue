@@ -1,23 +1,31 @@
 <script>
-export default {}
+import { useClassStore } from "@/stores/class";
+
+export default {
+  data() {
+    return {
+      classModel: useClassStore()
+    };
+  }
+}
 </script>
 
 <template>
-  <form>
+  <form @submit.prevent="classModel.validateUserInformation()">
     <div class="mb-3">
       <label for="url-platform" class="form-label">Url Plataforma</label>
-      <input type="url" class="form-control" id="url-platform" />
+      <input type="url" class="form-control" id="url-platform" v-model="classModel.userInformation.platform" />
     </div>
     <div class="mb-3">
       <label for="user-platform" class="form-label">Usuario</label>
-      <input type="text" class="form-control" id="user-platform" />
+      <input type="text" class="form-control" id="user-platform" v-model="classModel.userInformation.user" />
     </div>
     <div class="mb-3">
       <label for="pass-platform" class="form-label">Contraseña</label>
-      <input type="password" class="form-control" id="pass-platform" />
+      <input type="password" class="form-control" id="pass-platform" v-model="classModel.userInformation.password" />
     </div>
     <div class="mb-3 d-flex justify-content-center">
-      <button class="btn btn-validate">Validar</button>
+      <button class="btn btn-validate" type="submit">Validar</button>
     </div>
   </form>
 </template>

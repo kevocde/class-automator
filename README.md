@@ -8,7 +8,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/kevocde/class-automator">
-    <img src="front/class automator/assets/logo.png" alt="Logo" width="100" height="100">
+    <img src="public/assets/logo.png" alt="Logo" width="100" height="100">
   </a>
   <h2 align="center">Class Automator</h2>
   <p align="center">

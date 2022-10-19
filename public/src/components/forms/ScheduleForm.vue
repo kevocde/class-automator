@@ -4,11 +4,11 @@
   <form>
     <div class="row mb-3">
       <div class="col">
-        <label for="schedule-date" class="form-label"> Fecha </label>
+        <label for="schedule-date" class="form-label">Fecha</label>
         <input type="date" class="form-control" id="schedule-date" />
       </div>
       <div class="col">
-        <label for="schedule-time" class="form-label">Sede</label>
+        <label for="schedule-time" class="form-label">Hora</label>
         <select id="schedule-time" class="form-select">
           <option value="" selected>Seleccione</option>
           <option value="">6-8 am</option>
