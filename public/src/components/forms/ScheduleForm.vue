@@ -24,7 +24,12 @@
     <div class="row mb-3">
       <div class="col d-flex justify-content-center">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="" id="schedule-recurring">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            value=""
+            id="schedule-recurring"
+          />
           <label class="form-check-label" for="schedule-recurring">
             Agendar de manera recurrente
           </label>

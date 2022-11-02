@@ -1,5 +1,4 @@
-<script setup>
-</script>
+<script setup></script>
 
 <template>
   <header class="container-fluid d-block title-container">
@@ -15,6 +14,4 @@
   </header>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
