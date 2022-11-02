@@ -1,5 +1,5 @@
 from decouple import config
-from src.moodle import Chat
+from moodle import Chat
 
 
 if __name__ == '__main__':
