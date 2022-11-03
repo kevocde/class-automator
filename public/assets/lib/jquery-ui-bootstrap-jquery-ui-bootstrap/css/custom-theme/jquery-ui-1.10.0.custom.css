@@ -1366,10 +1366,10 @@ input[type=file]:focus, input[type=checkbox]:focus, select:focus {
   outline: 1px dotted #666;
 }
 
-input[type="text"],
-input[type="password"],
+input[type="text"]:not(.form-control),
+input[type="password"]:not(.form-control),
 .ui-autocomplete-input,
-textarea,
+textarea:not(.form-control),
 .uneditable-input {
   display: inline-block;
   padding: 4px;
