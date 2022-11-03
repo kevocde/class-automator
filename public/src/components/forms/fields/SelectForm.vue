@@ -31,6 +31,8 @@ export default {
   >
     <slot></slot>
   </select>
+  <div class="invalid-feedback">{{ invalidMsg }}</div>
+  <div class="valid-feedback">{{ validMsg }}</div>
 </template>
 
 <style scoped lang="sass"></style>

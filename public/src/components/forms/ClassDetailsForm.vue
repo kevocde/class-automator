@@ -5,17 +5,27 @@ import TextareaForm from "@/components/forms/fields/TextareaForm.vue";
 import { useClassStore } from "@/stores/class";
 
 export default {
+  props: ["stepper"],
   data() {
     return {
       classModel: useClassStore(),
     };
+  },
+  methods: {
+    validateForm(event) {
+      event.target.classList.add("was-validated");
+
+      if (event.target.checkValidity()) {
+        this.stepper.activeStep(2);
+      }
+    },
   },
   components: { TextareaForm, SelectForm, InputForm },
 };
 </script>
 
 <template>
-  <form>
+  <form @submit.prevent="validateForm" novalidate>
     <div class="row mb-3">
       <div class="col">
         <SelectForm

@@ -48,7 +48,7 @@ export default {
     },
     loadDefaultStep() {
       /** @todo Add url interaction, for example: when the url contains "#step-1", active the step 1  */
-      this.activeStep(2);
+      this.activeStep(1);
     },
   },
   mounted() {
@@ -105,12 +105,12 @@ export default {
       </div>
       <div class="stepper-content-option">
         <div class="d-flex justify-content-center py-2">
-          <ClassDetailsForm class="w-50" />
+          <ClassDetailsForm class="w-50" :stepper="this" />
         </div>
       </div>
       <div class="stepper-content-option">
         <div class="d-flex justify-content-center py-2">
-          <ScheduleForm class="w-50" />
+          <ScheduleForm class="w-50" :stepper="this" />
         </div>
       </div>
     </div>

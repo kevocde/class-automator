@@ -5,6 +5,7 @@ import CheckboxForm from "@/components/forms/fields/CheckboxForm.vue";
 import { useClassStore } from "@/stores/class";
 
 export default {
+  props: ["stepper"],
   data() {
     return {
       classModel: useClassStore(),
@@ -18,6 +19,13 @@ export default {
         },
       });
     },
+    validateForm(event) {
+      event.target.classList.add("was-validated");
+
+      if (event.target.checkValidity()) {
+        this.stepper.activeStep(2);
+      }
+    },
   },
   mounted() {
     this.initDatepickers();
@@ -27,7 +35,7 @@ export default {
 </script>
 
 <template>
-  <form>
+  <form @submit.prevent="validateForm" novalidate>
     <div class="row mb-3">
       <div class="col">
         <InputForm
@@ -62,7 +70,6 @@ export default {
     <div class="row mb-3">
       <div class="col d-flex justify-content-center">
         <CheckboxForm
-          required
           label="Agendar de manera recurrente"
           id="schedule-recurring"
           invalid-msg="This field is required"
