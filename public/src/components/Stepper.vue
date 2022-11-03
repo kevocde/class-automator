@@ -48,7 +48,7 @@ export default {
     },
     loadDefaultStep() {
       /** @todo Add url interaction, for example: when the url contains "#step-1", active the step 1  */
-      this.activeStep(0);
+      this.activeStep(2);
     },
   },
   mounted() {

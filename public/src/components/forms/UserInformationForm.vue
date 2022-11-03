@@ -1,5 +1,6 @@
 <script>
 import { useClassStore } from "@/stores/class";
+import InputForm from "@/components/forms/fields/InputForm.vue";
 
 export default {
   props: ["stepper"],
@@ -17,43 +18,45 @@ export default {
       }
     },
   },
+  components: { InputForm },
 };
 </script>
 
 <template>
   <form @submit.prevent="validateForm" novalidate>
     <div class="mb-3">
-      <label for="url-platform" class="form-label">Url Plataforma</label>
-      <input
+      <InputForm
         type="url"
-        class="form-control"
+        required
+        label="Url Plataforma"
         id="url-platform"
-        v-model="classModel.userInformation.platform"
-        required
+        invalid-msg="This field is required"
+        :label-attrs="{ for: 'url-platform' }"
+        :model="classModel.userInformation.platform"
+        @update:model="(value) => (classModel.userInformation.platform = value)"
       />
-      <div class="invalid-feedback">This field is required</div>
     </div>
     <div class="mb-3">
-      <label for="user-platform" class="form-label">Usuario</label>
-      <input
+      <InputForm
         type="text"
-        class="form-control"
-        id="user-platform"
-        v-model="classModel.userInformation.user"
         required
+        label="Usuario"
+        id="user-platform"
+        invalid-msg="This field is required"
+        :model="classModel.userInformation.user"
+        @update:model="(value) => (classModel.userInformation.user = value)"
       />
-      <div class="invalid-feedback">This field is required</div>
     </div>
     <div class="mb-3">
-      <label for="pass-platform" class="form-label">Contraseña</label>
-      <input
+      <InputForm
         type="password"
-        class="form-control"
-        id="pass-platform"
-        v-model="classModel.userInformation.password"
         required
+        label="Contraseña"
+        id="pass-platform"
+        invalid-msg="This field is required"
+        :model="classModel.userInformation.password"
+        @update:model="(value) => (classModel.userInformation.password = value)"
       />
-      <div class="invalid-feedback">This field is required</div>
     </div>
     <div class="mb-3 d-flex justify-content-center">
       <button class="btn btn-validate" type="submit">Validar</button>
