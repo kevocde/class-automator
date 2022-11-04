@@ -67,6 +67,26 @@ class Api:
         else:
             raise Exception("Cannot login in the site")
 
+    def check_credentials(self):
+        """Test the credentials"""
+        resp = self.get('/login/index.php')
+
+        if 400 <= resp.status_code < 600:
+            raise Exception("Platform not found")
+
+        soup = BeautifulSoup(self.get('/login/index.php').text, 'html.parser')
+        resp = self.post(
+            '/login/index.php',
+            data={
+                'logintoken': soup.select_one('input[name="logintoken"]').attrs['value'],
+                'username': self._username,
+                'password': self._password
+            }
+        )
+
+        if 400 <= resp.status_code < 600 or "Invalid login, please try again" in resp.text:
+            raise Exception("Invalid user or password")
+
     def send_message(self, to: str, messages: Union[List[str], str]) -> Optional[List[Message]]:
         """Sends a message to determinate user"""
         methodname = 'core_message_send_messages_to_conversation'

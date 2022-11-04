@@ -48,7 +48,7 @@ export default {
     },
     loadDefaultStep() {
       /** @todo Add url interaction, for example: when the url contains "#step-1", active the step 1  */
-      this.activeStep(1);
+      this.activeStep(0);
     },
   },
   mounted() {
@@ -63,7 +63,7 @@ export default {
   <div class="stepper">
     <ul class="d-flex gap-1 w-100 stepper-header">
       <li
-        class="flex-fill d-flex align-items-center justify-content-center stepper-header-item active"
+        class="flex-fill d-flex align-items-center justify-content-center stepper-header-item no-interact"
       >
         <div
           class="rounded-circle d-flex justify-content-center align-items-center fs-5 fw-bold header-item-circle"
