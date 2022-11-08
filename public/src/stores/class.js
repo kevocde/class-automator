@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import axios from "axios";
 
 export const useClassStore = defineStore("class", {
   state() {
@@ -24,8 +25,11 @@ export const useClassStore = defineStore("class", {
     };
   },
   actions: {
-    validateUserInformation() {
-      console.log("Validating user information");
+    async validateUserInformation() {
+      await axios
+        .post("/user-information", this.userInformation)
+        .then(() => true)
+        .catch(() => false);
     },
     validateClassDetails() {
       console.log("Validating class details");

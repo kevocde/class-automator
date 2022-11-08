@@ -13,7 +13,10 @@ export default {
     validateForm(event) {
       event.target.classList.add("was-validated");
 
-      if (event.target.checkValidity()) {
+      if (
+        event.target.checkValidity() &&
+        this.classModel.validateUserInformation()
+      ) {
         this.stepper.activeStep(1);
       }
     },
