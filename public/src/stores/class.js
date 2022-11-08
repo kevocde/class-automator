@@ -26,10 +26,17 @@ export const useClassStore = defineStore("class", {
   },
   actions: {
     async validateUserInformation() {
-      await axios
+      let valid = await axios
         .post("/user-information", this.userInformation)
-        .then(() => true)
         .catch(() => false);
+
+      return valid !== false;
+    },
+    async getDatesEnabled() {
+      return await axios
+        .get("/dates-enabled")
+        .then((res) => res.data.datesEnabled)
+        .catch(() => []);
     },
     validateClassDetails() {
       console.log("Validating class details");

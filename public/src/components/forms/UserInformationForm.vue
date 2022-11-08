@@ -12,12 +12,19 @@ export default {
   methods: {
     validateForm(event) {
       event.target.classList.add("was-validated");
+      event.target.querySelector('[type="submit"]').disabled = true;
 
-      if (
-        event.target.checkValidity() &&
-        this.classModel.validateUserInformation()
-      ) {
-        this.stepper.activeStep(1);
+      if (event.target.checkValidity()) {
+        this.classModel
+          .validateUserInformation()
+          .then((res) => {
+            if (res) {
+              this.stepper.activeStep(1);
+            }
+          })
+          .finally(() => {
+            event.target.querySelector('[type="submit"]').disabled = false;
+          });
       }
     },
   },

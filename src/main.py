@@ -39,9 +39,10 @@ async def get_dates_enabled():
     for i in range(30):
         current = start + timedelta(days=i)
         if int(current.strftime("%w")) != 0:
-            dates.append(current.isoformat())
+            pieces = [current.strftime("%m"), current.strftime("%d"), current.strftime("%Y")]
+            dates.append('/'.join([str(int(value)) for value in pieces]))
 
-    return {"dates-enabled": dates}
+    return {"datesEnabled": dates}
 
     # dates = [(start + timedelta(days=i)) for i in range(30)]
     # dates = filter(lambda date: date.strftime("%w") != 1, dates)

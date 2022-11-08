@@ -13,17 +13,24 @@ export default {
   },
   methods: {
     initDatepickers() {
-      $("#schedule-date").datepicker({
-        gotoCurrent: true,
-        beforeShowDay: (date) => {
-          let today = new Date();
-          let show = date >= today.setDate(today.getDate() + 1);
-          show &= date.getDay() !== 0;
-          return [show, "", ""];
-        },
-        onSelect: (value) => {
-          this.classModel.schedule.date = value;
-        },
+      this.classModel.getDatesEnabled().then((dates) => {
+        $("#schedule-date").datepicker({
+          gotoCurrent: true,
+          beforeShowDay: (date) => {
+            return [
+              dates.some(
+                (value) =>
+                  `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()}` ===
+                  value
+              ),
+              "",
+              "",
+            ];
+          },
+          onSelect: (value) => {
+            this.classModel.schedule.date = value;
+          },
+        });
       });
     },
     validateForm(event) {
