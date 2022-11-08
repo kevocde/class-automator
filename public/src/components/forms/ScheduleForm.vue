@@ -14,6 +14,13 @@ export default {
   methods: {
     initDatepickers() {
       $("#schedule-date").datepicker({
+        gotoCurrent: true,
+        beforeShowDay: (date) => {
+          let today = new Date();
+          let show = date >= today.setDate(today.getDate() + 1);
+          show &= date.getDay() !== 0;
+          return [show, "", ""];
+        },
         onSelect: (value) => {
           this.classModel.schedule.date = value;
         },
@@ -40,6 +47,7 @@ export default {
       <div class="col">
         <InputForm
           required
+          readonly
           label="Fecha"
           id="schedule-date"
           invalid-msg="This field is required"

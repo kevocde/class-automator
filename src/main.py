@@ -1,3 +1,4 @@
+from datetime import timedelta, datetime
 from decouple import config
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -28,3 +29,20 @@ async def check_login(data: BasicUserInfo):
         return Response(status_code=201)
     except Exception as ex:
         raise HTTPException(status_code=400, detail=str(ex))
+
+
+@app.get("/dates-enabled")
+async def get_dates_enabled():
+    start = datetime.now() + timedelta(days=2)
+    dates = []
+
+    for i in range(30):
+        current = start + timedelta(days=i)
+        if int(current.strftime("%w")) != 0:
+            dates.append(current.isoformat())
+
+    return {"dates-enabled": dates}
+
+    # dates = [(start + timedelta(days=i)) for i in range(30)]
+    # dates = filter(lambda date: date.strftime("%w") != 1, dates)
+    # return {"dates-enabled": [date.strftime("%m/%d/%Y") for date in dates]}
