@@ -51,13 +51,13 @@ export default {
           @update:model="(value) => (classModel.classDetails.level = value)"
         >
           <option value="" selected>Seleccione</option>
-          <option value="1">A1</option>
-          <option value="2">A2</option>
-          <option value="3">B1</option>
-          <option value="4">B1+</option>
-          <option value="5">B2</option>
-          <option value="6">C1</option>
-          <option value="7">C2</option>
+          <option value="A1">A1</option>
+          <option value="A2">A2</option>
+          <option value="B1">B1</option>
+          <option value="B1+">B1+</option>
+          <option value="B2">B2</option>
+          <option value="C1">C1</option>
+          <option value="C2">C2</option>
         </SelectForm>
       </div>
     </div>
@@ -74,11 +74,11 @@ export default {
           "
         >
           <option value="" selected>Seleccione</option>
-          <option value="">Cr 5 Nº 37-76 Ibagué</option>
-          <option value="">Centro 11 con 4ta Ibagué</option>
-          <option value="">CC Mercurio/jumbo Soacha</option>
-          <option value="">CC Ventura Terreros local 2-40 Soacha</option>
-          <option value="">Carrera 13 # 45A-31 Chapinero Bogotá</option>
+          <option value="1">Cr 5 Nº 37-76 Ibagué</option>
+          <option value="2">Centro 11 con 4ta Ibagué</option>
+          <option value="3">CC Mercurio/jumbo Soacha</option>
+          <option value="4">CC Ventura Terreros local 2-40 Soacha</option>
+          <option value="5">Carrera 13 # 45A-31 Chapinero Bogotá</option>
         </SelectForm>
       </div>
       <div class="col">

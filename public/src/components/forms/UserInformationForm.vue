@@ -25,6 +25,8 @@ export default {
           .finally(() => {
             event.target.querySelector('[type="submit"]').disabled = false;
           });
+      } else {
+        event.target.querySelector('[type="submit"]').disabled = false;
       }
     },
   },
@@ -34,18 +36,6 @@ export default {
 
 <template>
   <form @submit.prevent="validateForm" novalidate>
-    <div class="mb-3">
-      <InputForm
-        type="url"
-        required
-        label="Url Plataforma"
-        id="url-platform"
-        invalid-msg="This field is required"
-        :label-attrs="{ for: 'url-platform' }"
-        :model="classModel.userInformation.platform"
-        @update:model="(value) => (classModel.userInformation.platform = value)"
-      />
-    </div>
     <div class="mb-3">
       <InputForm
         type="text"

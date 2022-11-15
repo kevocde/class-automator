@@ -17,15 +17,8 @@ export default {
         $("#schedule-date").datepicker({
           gotoCurrent: true,
           beforeShowDay: (date) => {
-            return [
-              dates.some(
-                (value) =>
-                  `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()}` ===
-                  value
-              ),
-              "",
-              "",
-            ];
+            date = [date.getMonth() + 1, date.getDate(), date.getFullYear()];
+            return [dates.some((value) => date.join("/") === value), "", ""];
           },
           onSelect: (value) => {
             this.classModel.schedule.date = value;
@@ -35,9 +28,27 @@ export default {
     },
     validateForm(event) {
       event.target.classList.add("was-validated");
+      event.target.querySelector('[type="submit"]').disabled = true;
 
       if (event.target.checkValidity()) {
-        this.stepper.activeStep(2);
+        this.classModel
+          .doSchedule()
+          .then((res) => {
+            if (res) {
+              document
+                .querySelectorAll("form.was-validated")
+                .forEach((element) => {
+                  element.classList.remove("was-validated");
+                });
+              this.classModel.$reset();
+              this.stepper.activeStep(0);
+            }
+          })
+          .finally(() => {
+            event.target.querySelector('[type="submit"]').disabled = false;
+          });
+      } else {
+        event.target.querySelector('[type="submit"]').disabled = false;
       }
     },
   },
@@ -72,13 +83,13 @@ export default {
           @update:model="(value) => (classModel.schedule.time = value)"
         >
           <option value="" selected>Seleccione</option>
-          <option value="1">6-8 am</option>
-          <option value="2">8-10 am</option>
-          <option value="3">10-12 am</option>
-          <option value="4">1-3 pm</option>
-          <option value="5">3-5 pm</option>
-          <option value="6">5-7 pm</option>
-          <option value="7">7-9 pm</option>
+          <option value="6-8">6-8 am</option>
+          <option value="8-10">8-10 am</option>
+          <option value="10-12">10-12 am</option>
+          <option value="1-3">1-3 pm</option>
+          <option value="3-5">3-5 pm</option>
+          <option value="5-7">5-7 pm</option>
+          <option value="7-9">7-9 pm</option>
         </SelectForm>
       </div>
     </div>
@@ -102,12 +113,14 @@ export default {
           id="schedule-times"
           invalid-msg="This field is required"
           :model="classModel.schedule.times"
-          @update:model="(value) => (classModel.schedule.times = value)"
+          @update:model="
+            (value) => (classModel.schedule.times = parseInt(value))
+          "
         />
       </div>
     </div>
     <div class="mb-3 d-flex justify-content-center">
-      <button class="btn btn-validate">Continuar</button>
+      <button class="btn btn-validate" type="submit">Agendar</button>
     </div>
   </form>
 </template>

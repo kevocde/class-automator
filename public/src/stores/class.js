@@ -5,7 +5,6 @@ export const useClassStore = defineStore("class", {
   state() {
     return {
       userInformation: {
-        platform: "",
         user: "",
         password: "",
       },
@@ -38,11 +37,17 @@ export const useClassStore = defineStore("class", {
         .then((res) => res.data.datesEnabled)
         .catch(() => []);
     },
-    validateClassDetails() {
-      console.log("Validating class details");
+    async doSchedule() {
+      return await axios
+        .post("/schedules", {
+          userInformation: this.userInformation,
+          classDetails: this.classDetails,
+          schedule: this.schedule,
+        })
+        .catch(() => false);
     },
-    validateSchedule() {
-      console.log("Validating schedule");
+    resetForm() {
+      this.$reset();
     },
     send() {
       console.log("Sending class");
