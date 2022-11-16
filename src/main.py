@@ -2,7 +2,7 @@ from datetime import timedelta, datetime
 from decouple import config
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from .rest import BasicUserInfo, ClassDetails, Schedule
+from .rest import BasicUserInfo, ClassDetails, Schedule, BasicUserInfoDao
 from .moodle import Api
 
 app = FastAPI()
@@ -47,6 +47,11 @@ async def get_dates_enabled():
             dates.append('/'.join([str(int(value)) for value in pieces]))
 
     return {"datesEnabled": dates}
+
+
+@app.get("/schedules")
+async def get_schedules():
+    return BasicUserInfoDao.get_all()
 
 
 @app.post("/schedules")

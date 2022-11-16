@@ -36,6 +36,9 @@ class BasicUserInfo(BaseModel):
         """Get list with information of credentials"""
         return [self.platform, self.user, self.password]
 
+    class Config:
+        orm_mode = True
+
 
 class ClassDetails(BaseModel):
     lang: AvailableLanguages
@@ -44,9 +47,15 @@ class ClassDetails(BaseModel):
     studentCode: str
     unitOther: str
 
+    class Config:
+        orm_mode = True
+
 
 class Schedule(BaseModel):
     date: str
     time: AvailableTimes
     recurring: bool
     times: int
+
+    class Config:
+        orm_mode = True
