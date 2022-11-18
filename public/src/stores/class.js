@@ -4,16 +4,16 @@ import axios from "axios";
 export const useClassStore = defineStore("class", {
   state() {
     return {
-      userInformation: {
+      user_information: {
         user: "",
         password: "",
       },
-      classDetails: {
+      class_details: {
         lang: "",
         level: "",
         headquarter: "",
-        studentCode: "",
-        unitOther: "",
+        student_code: "",
+        unit_other: "",
       },
       schedule: {
         date: "",
@@ -26,7 +26,7 @@ export const useClassStore = defineStore("class", {
   actions: {
     async validateUserInformation() {
       let valid = await axios
-        .post("/user-information", this.userInformation)
+        .post("/user-information", this.user_information)
         .catch(() => false);
 
       return valid !== false;
@@ -40,8 +40,8 @@ export const useClassStore = defineStore("class", {
     async doSchedule() {
       return await axios
         .post("/schedules", {
-          userInformation: this.userInformation,
-          classDetails: this.classDetails,
+          user_information: this.user_information,
+          class_details: this.class_details,
           schedule: this.schedule,
         })
         .catch(() => false);

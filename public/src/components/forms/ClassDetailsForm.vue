@@ -33,8 +33,8 @@ export default {
           label="Idioma"
           id="class-lang"
           invalid-msg="This field is required"
-          :model="classModel.classDetails.lang"
-          @update:model="(value) => (classModel.classDetails.lang = value)"
+          :model="classModel.class_details.lang"
+          @update:model="(value) => (classModel.class_details.lang = value)"
         >
           <option value="" selected>Seleccione</option>
           <option value="en">Inglés</option>
@@ -47,8 +47,8 @@ export default {
           label="Nivel"
           id="class-level"
           invalid-msg="This field is required"
-          :model="classModel.classDetails.level"
-          @update:model="(value) => (classModel.classDetails.level = value)"
+          :model="classModel.class_details.level"
+          @update:model="(value) => (classModel.class_details.level = value)"
         >
           <option value="" selected>Seleccione</option>
           <option value="A1">A1</option>
@@ -68,9 +68,9 @@ export default {
           label="Sede"
           id="class-headquarter"
           invalid-msg="This field is required"
-          :model="classModel.classDetails.headquarter"
+          :model="classModel.class_details.headquarter"
           @update:model="
-            (value) => (classModel.classDetails.headquarter = value)
+            (value) => (classModel.class_details.headquarter = value)
           "
         >
           <option value="" selected>Seleccione</option>
@@ -87,9 +87,9 @@ export default {
           label="Código de estudiante"
           id="class-studentCode"
           invalid-msg="This field is required"
-          :model="classModel.userInformation.studentCode"
+          :model="classModel.class_details.student_code"
           @update:model="
-            (value) => (classModel.userInformation.studentCode = value)
+            (value) => (classModel.class_details.student_code = value)
           "
         />
       </div>
@@ -101,8 +101,10 @@ export default {
           label="Unidad y/o avance"
           id="class-unitOther"
           invalid-msg="This field is required"
-          :model="classModel.classDetails.unitOther"
-          @update:model="(value) => (classModel.classDetails.unitOther = value)"
+          :model="classModel.class_details.unit_other"
+          @update:model="
+            (value) => (classModel.class_details.unit_other = value)
+          "
         />
       </div>
     </div>

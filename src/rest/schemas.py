@@ -1,5 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel as Base
 from enum import Enum
+
+
+class BaseModel(Base):
+    @classmethod
+    def from_orm_list(cls, data: list) -> list:
+        return [cls.from_orm(record) for record in data]
 
 
 class AvailableLanguages(str, Enum):
@@ -44,8 +50,8 @@ class ClassDetails(BaseModel):
     lang: AvailableLanguages
     level: str
     headquarter: str
-    studentCode: str
-    unitOther: str
+    student_code: str
+    unit_other: str
 
     class Config:
         orm_mode = True

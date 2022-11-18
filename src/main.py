@@ -2,7 +2,7 @@ from datetime import timedelta, datetime
 from decouple import config
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from .rest import BasicUserInfo, ClassDetails, Schedule, BasicUserInfoDao
+from .rest import repositories, BasicUserInfo, ClassDetails, Schedule
 from .moodle import Api
 
 app = FastAPI()
@@ -49,12 +49,16 @@ async def get_dates_enabled():
     return {"datesEnabled": dates}
 
 
-@app.get("/schedules")
-async def get_schedules():
-    return BasicUserInfoDao.get_all()
-
-
 @app.post("/schedules")
-async def set_schedule(userInformation: BasicUserInfo, classDetails: ClassDetails, schedule: Schedule):
-    userInformation.platform = config("ACADEMY_URL")
-    return [userInformation, classDetails, schedule]
+async def set_schedule(user_information: BasicUserInfo, class_details: ClassDetails, schedule: Schedule):
+    user_information = repositories \
+        .BasicUserInfoRepository \
+        .update_or_create({
+            **user_information.dict(exclude={'platform'}),
+            **{'student_code': class_details.student_code}
+        })
+
+    if not user_information:
+        raise HTTPException(500, "Ha ocurrido un error al intentar almacenar el usuario")
+
+    return [user_information, class_details, schedule]

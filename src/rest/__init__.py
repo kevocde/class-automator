@@ -1,2 +1,2 @@
 from .schemas import *
-from .dao import *
+from .repositories import *

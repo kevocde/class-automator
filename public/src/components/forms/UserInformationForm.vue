@@ -43,8 +43,8 @@ export default {
         label="Usuario"
         id="user-platform"
         invalid-msg="This field is required"
-        :model="classModel.userInformation.user"
-        @update:model="(value) => (classModel.userInformation.user = value)"
+        :model="classModel.user_information.user"
+        @update:model="(value) => (classModel.user_information.user = value)"
       />
     </div>
     <div class="mb-3">
@@ -54,8 +54,10 @@ export default {
         label="Contraseña"
         id="pass-platform"
         invalid-msg="This field is required"
-        :model="classModel.userInformation.password"
-        @update:model="(value) => (classModel.userInformation.password = value)"
+        :model="classModel.user_information.password"
+        @update:model="
+          (value) => (classModel.user_information.password = value)
+        "
       />
     </div>
     <div class="mb-3 d-flex justify-content-center">
