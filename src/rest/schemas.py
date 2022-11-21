@@ -63,5 +63,8 @@ class Schedule(BaseModel):
     recurring: bool
     times: int
 
+    def __setattr__(self, key, value):
+        print('OK')
+
     class Config:
         orm_mode = True

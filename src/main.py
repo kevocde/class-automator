@@ -51,14 +51,28 @@ async def get_dates_enabled():
 
 @app.post("/schedules")
 async def set_schedule(user_information: BasicUserInfo, class_details: ClassDetails, schedule: Schedule):
-    user_information = repositories \
-        .BasicUserInfoRepository \
-        .update_or_create({
-            **user_information.dict(exclude={'platform'}),
-            **{'student_code': class_details.student_code}
-        })
+    try:
+        user_information = repositories \
+            .BasicUserInfoRepository \
+            .update_or_create({
+                **{'student_code': class_details.student_code},
+                **user_information.dict(exclude={'platform'})
+            })
 
-    if not user_information:
-        raise HTTPException(500, "Ha ocurrido un error al intentar almacenar el usuario")
+        if not user_information:
+            raise ValueError()
 
-    return [user_information, class_details, schedule]
+        schedule = repositories \
+            .SchedulesRepository \
+            .create({
+                **{'user_id': user_information[0]},
+                **class_details.dict(exclude={'student_code'}),
+                **schedule.dict()
+            })
+
+        if not schedule:
+            raise ValueError()
+
+        return Response(status_code=201)
+    except Exception:
+        raise HTTPException(500, "An error has occurred while scheduling the class.")

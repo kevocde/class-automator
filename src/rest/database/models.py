@@ -1,6 +1,5 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, TIMESTAMP, Text
 from sqlalchemy.orm import relationship
-
 from .database import Base
 
 
@@ -23,14 +22,30 @@ class ScheduleDB(Base):
     level = Column(String)
     headquarter = Column(String)
     unit_other = Column(String)
-    date = Column(Date)
-    time = Column(String)
+    _date = Column("date", Date)
+    _time = Column("time", String)
     recurring = Column(Boolean, default=False)
     times = Column(Integer)
     user_id = Column(Integer, ForeignKey("basic_user_information.id"))
 
     user = relationship("BasicUserInfoDB", back_populates="schedules")
     attemps = relationship("AttemptDB", back_populates="schedule")
+
+    @property
+    def time(self):
+        return self._time.strip()
+
+    @time.setter
+    def time(self, value):
+        self._time = value
+
+    @property
+    def date(self):
+        return self._date.strftime("%m/%d/%Y")
+
+    @date.setter
+    def date(self, value):
+        self._date = value
 
 
 class AttemptDB(Base):
