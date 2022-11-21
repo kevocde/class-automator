@@ -74,5 +74,6 @@ async def set_schedule(user_information: BasicUserInfo, class_details: ClassDeta
             raise ValueError()
 
         return Response(status_code=201)
-    except Exception:
+    except Exception as err:
+        print(err)
         raise HTTPException(500, "An error has occurred while scheduling the class.")

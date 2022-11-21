@@ -15,6 +15,7 @@ export default {
     initDatepickers() {
       this.classModel.getDatesEnabled().then((dates) => {
         $("#schedule-date").datepicker({
+          dateFormat: "yy-mm-dd",
           gotoCurrent: true,
           beforeShowDay: (date) => {
             date = [date.getMonth() + 1, date.getDate(), date.getFullYear()];

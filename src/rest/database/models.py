@@ -41,7 +41,7 @@ class ScheduleDB(Base):
 
     @property
     def date(self):
-        return self._date.strftime("%m/%d/%Y")
+        return self._date.strftime("%Y-%m-%d")
 
     @date.setter
     def date(self, value):
