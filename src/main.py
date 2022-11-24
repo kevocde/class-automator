@@ -4,6 +4,7 @@ from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from .rest import repositories, BasicUserInfo, ClassDetails, Schedule
 from .moodle import Api
+from fastapi_utils.tasks import repeat_every
 
 app = FastAPI()
 
@@ -77,3 +78,10 @@ async def set_schedule(user_information: BasicUserInfo, class_details: ClassDeta
     except Exception as err:
         print(err)
         raise HTTPException(500, "An error has occurred while scheduling the class.")
+
+
+@app.on_event("startup")
+@repeat_every(seconds=60 * 60)
+def execute_shedules() -> None:
+    print('Procesing schedule ...')
+    print(repositories.SchedulesRepository.find_next_shedules_to_schedule())

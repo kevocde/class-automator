@@ -1,10 +1,11 @@
 from __future__ import annotations
 import abc
+from datetime import datetime, timedelta
 
-import sqlalchemy.exc
+from sqlalchemy import exc, select, func
 
 from .schemas import BasicUserInfo, Schedule
-from .database import get_db, BasicUserInfoDB, ScheduleDB
+from .database import get_db, BasicUserInfoDB, ScheduleDB, AttemptDB
 
 DEFAULT_LIMIT = 10
 
@@ -65,10 +66,34 @@ class BasicUserInfoRepository(Repository):
                 .first()
 
             return cls.create(data) if not model else cls.update(model.id, data)
-        except sqlalchemy.exc.DatabaseError:
+        except exc.DatabaseError:
             return None
 
 
 class SchedulesRepository(Repository):
     SCHEMA = Schedule
     MODEL = ScheduleDB
+
+    @classmethod
+    def find_next_shedules_to_schedule(cls) -> list[tuple[int, SCHEMA]] | None:
+        try:
+            current = datetime.now() + timedelta(hours=12, days=2)
+            db = get_db()
+
+            attempts_query = (
+                select(func.count(AttemptDB.id))
+                .where(ScheduleDB.id == AttemptDB.schedule_id and AttemptDB.successful)
+                .scalar_subquery()
+            )
+
+            result = db.query(ScheduleDB)\
+                .where(
+                    ScheduleDB.__dict__['_date'] == current.date()
+                    and ScheduleDB.times < attempts_query.scalar_subquery()
+                )\
+                .all()
+
+            return [(row.id, Schedule.from_orm(row)) for row in result]
+        except Exception as err:
+            print(err)
+            return None
