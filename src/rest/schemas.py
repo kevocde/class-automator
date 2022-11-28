@@ -62,6 +62,10 @@ class Schedule(BaseModel):
     time: AvailableTimes
     recurring: bool
     times: int
+    user: BasicUserInfo | None
+
+    def get_message(self, attempts):
+        print(self.__dict__)
 
     class Config:
         orm_mode = True

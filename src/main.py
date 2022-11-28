@@ -1,3 +1,5 @@
+import locale
+import random
 from datetime import timedelta, datetime
 from decouple import config
 from fastapi import FastAPI, HTTPException, Response
@@ -5,6 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from .rest import repositories, BasicUserInfo, ClassDetails, Schedule
 from .moodle import Api
 from fastapi_utils.tasks import repeat_every
+
+locale.setlocale(locale.LC_ALL, 'es_CO.UTF-8')
 
 app = FastAPI()
 
@@ -75,13 +79,23 @@ async def set_schedule(user_information: BasicUserInfo, class_details: ClassDeta
             raise ValueError()
 
         return Response(status_code=201)
-    except Exception as err:
-        print(err)
+    except Exception:
         raise HTTPException(500, "An error has occurred while scheduling the class.")
 
 
 @app.on_event("startup")
-@repeat_every(seconds=60 * 60)
+@repeat_every(seconds=60)
 def execute_shedules() -> None:
-    print('Procesing schedule ...')
-    print(repositories.SchedulesRepository.find_next_shedules_to_schedule())
+    schedules_info = repositories.SchedulesRepository.find_next_shedules_to_schedule()
+    for (id, schedule, attempts) in schedules_info:
+        if (schedule.times - attempts) > 0:
+            schedule_date = datetime.strptime(schedule.date, '%Y-%m-%d') + timedelta(days=(7 * attempts))
+
+            message_formats = (
+                "Hola buenos días, me gustaría programar una clase para el próximo {} de {}, te dejo mis datos: \n{}",
+                "Holaaa, espero se encuentren de maravilla, me gustaría programar una clase para el {} de {}, los datos son: \n{}",
+            )
+
+            print(random.choice(message_formats).format(schedule_date.strftime('%A %d de %B'), schedule.time, ''), schedule.user)
+
+

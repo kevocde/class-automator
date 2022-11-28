@@ -75,25 +75,25 @@ class SchedulesRepository(Repository):
     MODEL = ScheduleDB
 
     @classmethod
-    def find_next_shedules_to_schedule(cls) -> list[tuple[int, SCHEMA]] | None:
+    def find_next_shedules_to_schedule(cls) -> list[tuple[int, SCHEMA, int]] | None:
         try:
             current = datetime.now() + timedelta(hours=12, days=2)
             db = get_db()
 
             attempts_query = (
                 select(func.count(AttemptDB.id))
-                .where(ScheduleDB.id == AttemptDB.schedule_id and AttemptDB.successful)
+                .where(ScheduleDB.id == AttemptDB.schedule_id)
                 .scalar_subquery()
             )
 
-            result = db.query(ScheduleDB)\
+            result = db.query(ScheduleDB, attempts_query)\
                 .where(
                     ScheduleDB.__dict__['_date'] == current.date()
-                    and ScheduleDB.times < attempts_query.scalar_subquery()
+                    and ScheduleDB.id == AttemptDB.schedule_id
                 )\
                 .all()
 
-            return [(row.id, Schedule.from_orm(row)) for row in result]
+            return [(row[0].id, Schedule.from_orm(row[0]), row[1]) for row in result]
         except Exception as err:
             print(err)
             return None
