@@ -93,7 +93,29 @@ class SchedulesRepository(Repository):
                 )\
                 .all()
 
-            return [(row[0].id, Schedule.from_orm(row[0]), row[1]) for row in result]
+            return [
+                (
+                    row[0].id,
+                    Schedule(
+                        **{
+                            'date': row[0].date,
+                            'time': row[0].time,
+                            'recurring': row[0].recurring,
+                            'times': row[0].times,
+                            'user': row[0].user,
+                            'class_details': {
+                                'lang': row[0].lang.strip(),
+                                'level': row[0].level.strip(),
+                                'headquarter': row[0].headquarter,
+                                'student_code': row[0].user.student_code,
+                                'unit_other': row[0].unit_other
+                            }
+                        }
+                    ),
+                    row[1]
+                )
+                for row in result
+            ]
         except Exception as err:
             print(err)
             return None

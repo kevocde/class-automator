@@ -2,6 +2,15 @@ from pydantic import BaseModel as Base
 from enum import Enum
 
 
+POSSIBLE_MESSAGUES = (
+    "Hola buenos días, me gustaría programar una clase para el próximo {} de {}, te dejo mis datos: \n{}",
+    "Holaaa, espero se encuentren de maravilla, me gustaría programar una clase para el {} de {}, los datos son: \n{}",
+    "Saludos querida academia, sería posible programar una clase el {} de {}, estos son mis datos \n{}",
+    "Buenos días, me puede hacer el favor de programarme una clase el {} de {}, aquí están mis datos \n{}",
+    "Hola, me puedes ayudar programandome una clase para el {} de {}, datos: \n{}",
+)
+
+
 class BaseModel(Base):
     @classmethod
     def from_orm_list(cls, data: list) -> list:
@@ -63,9 +72,23 @@ class Schedule(BaseModel):
     recurring: bool
     times: int
     user: BasicUserInfo | None
+    class_details: ClassDetails | None
 
-    def get_message(self, attempts):
-        print(self.__dict__)
+    def get_message(self):
+        message = "Código: {}\n" \
+               "E-mail: {}\n" \
+               "Idioma: {}\n" \
+               "Nivel / Unidad: {} {}\n" \
+               "Sede: {}"
+
+        return message.format(
+            self.class_details.student_code,
+            self.user.user,
+            self.class_details.lang,
+            self.class_details.level,
+            self.class_details.unit_other,
+            self.class_details.headquarter
+        )
 
     class Config:
         orm_mode = True

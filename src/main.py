@@ -4,7 +4,7 @@ from datetime import timedelta, datetime
 from decouple import config
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from .rest import repositories, BasicUserInfo, ClassDetails, Schedule
+from .rest import repositories, BasicUserInfo, ClassDetails, Schedule, POSSIBLE_MESSAGUES
 from .moodle import Api
 from fastapi_utils.tasks import repeat_every
 
@@ -85,17 +85,25 @@ async def set_schedule(user_information: BasicUserInfo, class_details: ClassDeta
 
 @app.on_event("startup")
 @repeat_every(seconds=60)
-def execute_shedules() -> None:
-    schedules_info = repositories.SchedulesRepository.find_next_shedules_to_schedule()
-    for (id, schedule, attempts) in schedules_info:
-        if (schedule.times - attempts) > 0:
-            schedule_date = datetime.strptime(schedule.date, '%Y-%m-%d') + timedelta(days=(7 * attempts))
+async def execute_shedules() -> None:
+    try:
+        instances: dict[str, Api] = {}
+        schedules_info = repositories.SchedulesRepository.find_next_shedules_to_schedule()
+        for (id, schedule, attempts) in schedules_info:
+            if (schedule.times - attempts) > 0:
+                if id not in instances:
+                    instances[id] = Api(
+                        platform_url=config('ACADEMY_URL'),
+                        username=schedule.user.user,
+                        password=schedule.user.password
+                    )
 
-            message_formats = (
-                "Hola buenos días, me gustaría programar una clase para el próximo {} de {}, te dejo mis datos: \n{}",
-                "Holaaa, espero se encuentren de maravilla, me gustaría programar una clase para el {} de {}, los datos son: \n{}",
-            )
+                api = instances[id]
+                schedule_date = datetime.strptime(schedule.date, '%Y-%m-%d') + timedelta(days=(7 * attempts))
+                message = random\
+                    .choice(POSSIBLE_MESSAGUES)\
+                    .format(schedule_date.strftime('%A %d de %B'), schedule.time, schedule.get_message())
 
-            print(random.choice(message_formats).format(schedule_date.strftime('%A %d de %B'), schedule.time, ''), schedule.user)
-
-
+                api.send_message(config('DEFAULT_TO'), message)
+    except Exception as ex:
+        print(ex)
