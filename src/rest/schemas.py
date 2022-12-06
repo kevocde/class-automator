@@ -3,11 +3,11 @@ from enum import Enum
 
 
 POSSIBLE_MESSAGUES = (
-    "Hola buenos días, me gustaría programar una clase para el próximo {} de {}, te dejo mis datos: \n{}",
-    "Holaaa, espero se encuentren de maravilla, me gustaría programar una clase para el {} de {}, los datos son: \n{}",
-    "Saludos querida academia, sería posible programar una clase el {} de {}, estos son mis datos \n{}",
-    "Buenos días, me puede hacer el favor de programarme una clase el {} de {}, aquí están mis datos \n{}",
-    "Hola, me puedes ayudar programandome una clase para el {} de {}, datos: \n{}",
+    "Hola buenos días, me gustaría programar una clase para el próximo {} de {},\nte dejo mis datos: \n{}",
+    "Holaaa, espero se encuentren de maravilla, me gustaría programar una clase para el {} de {},nlos datos son: \n{}",
+    "Saludos querida academia, sería posible programar una clase el {} de {},nestos son mis datos \n{}",
+    "Buenos días, me puede hacer el favor de programarme una clase el {} de {},naquí están mis datos \n{}",
+    "Hola, me puedes ayudar programandome una clase para el {} de {},ndatos: \n{}",
 )
 
 

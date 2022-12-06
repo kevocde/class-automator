@@ -1,5 +1,7 @@
 import locale
 import random
+import asyncio
+import time
 from datetime import timedelta, datetime
 from decouple import config
 from fastapi import FastAPI, HTTPException, Response
@@ -60,9 +62,9 @@ async def set_schedule(user_information: BasicUserInfo, class_details: ClassDeta
         user_information = repositories \
             .BasicUserInfoRepository \
             .update_or_create({
-                **{'student_code': class_details.student_code},
-                **user_information.dict(exclude={'platform'})
-            })
+            **{'student_code': class_details.student_code},
+            **user_information.dict(exclude={'platform'})
+        })
 
         if not user_information:
             raise ValueError()
@@ -70,10 +72,10 @@ async def set_schedule(user_information: BasicUserInfo, class_details: ClassDeta
         schedule = repositories \
             .SchedulesRepository \
             .create({
-                **{'user_id': user_information[0]},
-                **class_details.dict(exclude={'student_code'}),
-                **schedule.dict()
-            })
+            **{'user_id': user_information[0]},
+            **class_details.dict(exclude={'student_code'}),
+            **schedule.dict()
+        })
 
         if not schedule:
             raise ValueError()
@@ -99,11 +101,28 @@ async def execute_shedules() -> None:
                     )
 
                 api = instances[id]
-                schedule_date = datetime.strptime(schedule.date, '%Y-%m-%d') + timedelta(days=(7 * attempts))
-                message = random\
-                    .choice(POSSIBLE_MESSAGUES)\
-                    .format(schedule_date.strftime('%A %d de %B'), schedule.time, schedule.get_message())
-
-                api.send_message(config('DEFAULT_TO'), message)
+                asyncio.create_task(process_schedule(api, schedule, attempts))
     except Exception as ex:
         print(ex)
+
+
+async def process_schedule(api, schedule, attempts):
+    schedule_date = datetime.strptime(schedule.date, '%Y-%m-%d') + timedelta(days=(7 * attempts))
+    message = random \
+        .choice(POSSIBLE_MESSAGUES) \
+        .format(schedule_date.strftime('%A %d de %B'), schedule.time, schedule.get_message())
+    message = api.send_message(config('DEFAULT_TO'), message)
+
+    if message:
+        times = int(config('LOOK_FOR')) // int(config('CHECK_EACH'))
+        while times > 0:
+            try:
+                resp = api.get_response(config('DEFAULT_TO'), message[-1].timecreated)
+                if resp:
+                    print(resp)
+                    return
+                else:
+                    print("May be the next time")
+            finally:
+                times -= 1
+                time.sleep(int(config('CHECK_EACH')))
